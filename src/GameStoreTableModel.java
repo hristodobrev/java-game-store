@@ -47,7 +47,7 @@ public class GameStoreTableModel extends AbstractTableModel {
 	public String getColumnName(int columnIndex) {
 		try {
 			ResultSetMetaData metaData = result.getMetaData();
-			return metaData.getColumnName(columnIndex + 1);
+			return metaData.getColumnLabel(columnIndex + 1);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
