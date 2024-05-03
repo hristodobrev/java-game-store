@@ -1,0 +1,70 @@
+DROP TABLE IF EXISTS game;
+DROP TABLE IF EXISTS  publisher;
+DROP TABLE IF EXISTS  genre;
+DROP TABLE IF EXISTS  country;
+
+CREATE TABLE genre (
+    id IDENTITY PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(200)
+);
+
+CREATE TABLE country (
+    id IDENTITY PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE publisher (
+    id IDENTITY PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(200),
+    country_id INT NOT NULL REFERENCES country(id)
+);
+
+CREATE TABLE game (
+    id IDENTITY PRIMARY KEY,
+    title VARCHAR(50) NOT NULL,
+    description VARCHAR(200),
+    release_date DATE NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+    genre_id INT NOT NULL REFERENCES genre(id),
+    publisher_id INT NOT NULL REFERENCES publisher(id)
+);
+
+INSERT INTO country (name) VALUES ('United States');
+INSERT INTO country (name) VALUES ('United Kingdom');
+INSERT INTO country (name) VALUES ('Canada');
+INSERT INTO country (name) VALUES ('Australia');
+INSERT INTO country (name) VALUES ('Germany');
+
+INSERT INTO genre (name, description) VALUES ('Action', 'Games with fast-paced gameplay and intense action sequences.');
+INSERT INTO genre (name, description) VALUES ('Adventure', 'Games that involve exploration, puzzle-solving, and storytelling.');
+INSERT INTO genre (name, description) VALUES ('RPG', 'Role-playing games that allow players to control characters and make choices that affect the story.');
+INSERT INTO genre (name, description) VALUES ('Strategy', 'Games that require strategic thinking and planning to outmaneuver opponents.');
+INSERT INTO genre (name, description) VALUES ('Simulation', 'Games that simulate real-world activities, such as driving, farming, or city-building.');
+
+INSERT INTO publisher (name, description, country_id) VALUES ('CD Projekt Red', 'Polish video game developer and publisher known for The Witcher series and Cyberpunk 2077.', 1);
+INSERT INTO publisher (name, description, country_id) VALUES ('Rockstar Games', 'American video game developer and publisher known for Grand Theft Auto and Red Dead Redemption series.', 2);
+INSERT INTO publisher (name, description, country_id) VALUES ('Epic Games', 'American video game developer and publisher known for Fortnite.', 1);
+INSERT INTO publisher (name, description, country_id) VALUES ('Nintendo', 'Japanese video game company famous for iconic franchises like Mario, Zelda, and Pokémon.', 3);
+INSERT INTO publisher (name, description, country_id) VALUES ('Mojang Studios', 'Swedish video game developer known for Minecraft.', 3);
+
+INSERT INTO game (title, description, release_date, genre_id, publisher_id) 
+VALUES 
+('The Witcher 3: Wild Hunt', 'An open-world action RPG developed by CD Projekt Red.', '2015-05-19', 3, 1);
+INSERT INTO game (title, description, release_date, genre_id, publisher_id) 
+VALUES 
+('Grand Theft Auto V', 'An action-adventure game developed by Rockstar Games.', '2013-09-17', 1, 2);
+INSERT INTO game (title, description, release_date, genre_id, publisher_id) 
+VALUES 
+('The Legend of Zelda: Breath of the Wild', 'An action-adventure game developed by Nintendo.', '2017-03-03', 2, 4);
+INSERT INTO game (title, description, release_date, genre_id, publisher_id) 
+VALUES 
+('Fortnite', 'A battle royale game developed by Epic Games.', '2017-07-25', 1, 3);
+INSERT INTO game (title, description, release_date, genre_id, publisher_id) 
+VALUES 
+('Minecraft', 'A sandbox video game developed by Mojang Studios.', '2009-05-17', 5, 5);
+
+SELECT game.title, game.description, game.release_date, genre.name AS genre, publisher.name AS publisher
+FROM game
+INNER JOIN genre ON genre.id = game.genre_id
+INNER JOIN publisher ON publisher.id = game.publisher_id;
