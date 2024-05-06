@@ -1,3 +1,5 @@
+package Views;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,20 +9,23 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import Database.DbConnection;
+import Utils.GameStoreTableModel;
+
 public abstract class BaseTab {
 	protected JPanel panel = new JPanel();
 	protected JTable table = new JTable();
 	protected JScrollPane tableScroll = new JScrollPane(table);
 	protected String tableName;
-	
+
 	protected BaseTab(String tableName) {
 		this.tableName = tableName;
 	}
 
-	public JPanel getPanel(){
+	public JPanel getPanel() {
 		return panel;
 	}
-	
+
 	public void loadData() {
 		Connection connection = DbConnection.getConnection();
 		try {

@@ -1,8 +1,10 @@
-public class Country {
+package Utils;
+
+public class ComboBoxItem {
 	private int id;
 	private String name;
 
-	public Country(int id, String name) {
+	public ComboBoxItem(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}

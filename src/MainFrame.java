@@ -3,6 +3,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import Views.CountriesTab;
+import Views.GamesTab;
+import Views.GenresTab;
+import Views.PublishersTab;
+
 public class MainFrame extends JFrame {
 	private JTabbedPane tab = new JTabbedPane();
 
