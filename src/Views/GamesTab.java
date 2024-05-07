@@ -1,10 +1,16 @@
 package Views;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,6 +24,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.toedter.calendar.JCalendar;
+import com.toedter.calendar.JDateChooser;
+
 import Database.DbConnection;
 import Utils.ComboBoxItem;
 import Views.PublishersTab.AddAction;
@@ -30,9 +39,10 @@ public class GamesTab extends BaseTab {
 
 	private JTextField titleField = new JTextField();
 	private JTextField descriptionField = new JTextField();
+	JDateChooser releaseDateChooser = new JDateChooser();
 	private JComboBox<ComboBoxItem> genresComboBox;
 	private JComboBox<ComboBoxItem> publishersComboBox;
-	
+
 	public GamesTab() {
 		super("game");
 
@@ -41,8 +51,8 @@ public class GamesTab extends BaseTab {
 		// Title
 		JPanel formPanel = new JPanel(new GridBagLayout());
 		JLabel titleLabel = new JLabel("Title");
-		titleLabel.setMinimumSize(new Dimension(70, titleLabel.getMinimumSize().height));
-		titleLabel.setPreferredSize(new Dimension(70, titleLabel.getPreferredSize().height));
+		titleLabel.setMinimumSize(new Dimension(100, titleLabel.getMinimumSize().height));
+		titleLabel.setPreferredSize(new Dimension(100, titleLabel.getPreferredSize().height));
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -59,8 +69,8 @@ public class GamesTab extends BaseTab {
 
 		// Description
 		JLabel descriptionLabel = new JLabel("Description");
-		descriptionLabel.setMinimumSize(new Dimension(70, descriptionLabel.getMinimumSize().height));
-		descriptionLabel.setPreferredSize(new Dimension(70, descriptionLabel.getPreferredSize().height));
+		descriptionLabel.setMinimumSize(new Dimension(100, descriptionLabel.getMinimumSize().height));
+		descriptionLabel.setPreferredSize(new Dimension(100, descriptionLabel.getPreferredSize().height));
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		formPanel.add(descriptionLabel, gbc);
@@ -70,15 +80,31 @@ public class GamesTab extends BaseTab {
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
-		gbc.insets = new Insets(0, 0, 0, 0);
+		gbc.insets = new Insets(0, 0, 5, 0);
 		formPanel.add(descriptionField, gbc);
 
-		// Genres
-		JLabel genresLabel = new JLabel("Genres");
-		genresLabel.setMinimumSize(new Dimension(70, genresLabel.getMinimumSize().height));
-		genresLabel.setPreferredSize(new Dimension(70, genresLabel.getPreferredSize().height));
+		// Datepicker
+		JLabel releaseDateLabel = new JLabel("Release Date");
+		releaseDateLabel.setMinimumSize(new Dimension(100, releaseDateLabel.getMinimumSize().height));
+		releaseDateLabel.setPreferredSize(new Dimension(100, releaseDateLabel.getPreferredSize().height));
 		gbc.gridx = 0;
 		gbc.gridy = 2;
+		formPanel.add(releaseDateLabel, gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridwidth = 2;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1.0;
+		gbc.insets = new Insets(0, 0, 0, 0);
+		formPanel.add(releaseDateChooser, gbc);
+		
+		// Genres
+		JLabel genresLabel = new JLabel("Genres");
+		genresLabel.setMinimumSize(new Dimension(100, genresLabel.getMinimumSize().height));
+		genresLabel.setPreferredSize(new Dimension(100, genresLabel.getPreferredSize().height));
+		gbc.gridx = 0;
+		gbc.gridy = 3;
 		formPanel.add(genresLabel, gbc);
 
 		genresComboBox = new JComboBox<ComboBoxItem>(getGenres());
@@ -89,15 +115,15 @@ public class GamesTab extends BaseTab {
 		gbc.weightx = 1.0;
 		gbc.insets = new Insets(5, 0, 5, 0);
 		formPanel.add(genresComboBox, gbc);
-		
+
 		// Publishers
 		JLabel publishersLabel = new JLabel("Publishers");
-		publishersLabel.setMinimumSize(new Dimension(70, publishersLabel.getMinimumSize().height));
-		publishersLabel.setPreferredSize(new Dimension(70, publishersLabel.getPreferredSize().height));
+		publishersLabel.setMinimumSize(new Dimension(100, publishersLabel.getMinimumSize().height));
+		publishersLabel.setPreferredSize(new Dimension(100, publishersLabel.getPreferredSize().height));
 		gbc.gridx = 0;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		formPanel.add(publishersLabel, gbc);
-		
+
 		publishersComboBox = new JComboBox<ComboBoxItem>(getPublishers());
 		gbc.gridx = 1;
 		gbc.gridwidth = 2;
@@ -110,13 +136,13 @@ public class GamesTab extends BaseTab {
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
 		JButton addButton = new JButton("Add");
-		//addButton.addActionListener(new AddAction());
+		addButton.addActionListener(new AddAction());
 		buttonsPanel.add(addButton);
 		JButton editButton = new JButton("Edit");
-		//editButton.addActionListener(new EditAction());
+		editButton.addActionListener(new EditAction());
 		buttonsPanel.add(editButton);
 		JButton deleteButton = new JButton("Delete");
-		//deleteButton.addActionListener(new DeleteAction());
+		deleteButton.addActionListener(new DeleteAction());
 		buttonsPanel.add(deleteButton);
 
 		// Table
@@ -138,7 +164,7 @@ public class GamesTab extends BaseTab {
 		gbc.insets = new Insets(5, 5, 5, 5);
 		panel.add(tableScroll, gbc);
 
-		//table.addMouseListener(new MouseAction());
+		table.addMouseListener(new MouseAction());
 	}
 
 	private void clearForm() {
@@ -171,22 +197,145 @@ public class GamesTab extends BaseTab {
 
 		return genres.toArray(new ComboBoxItem[0]);
 	}
-	
+
 	private ComboBoxItem[] getPublishers() {
 		List<ComboBoxItem> publishers = new ArrayList<ComboBoxItem>();
-		
+
 		try {
 			Connection connection = DbConnection.getConnection();
 			PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM publisher");
 			ResultSet resultSet = statement.executeQuery();
-			
+
 			while (resultSet.next()) {
 				publishers.add(new ComboBoxItem(resultSet.getInt("id"), resultSet.getString("name")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return publishers.toArray(new ComboBoxItem[0]);
+	}
+
+	private void setPublishersCombox(int publisherId) {
+		for (int i = 0; i < publishersComboBox.getItemCount(); i++) {
+			ComboBoxItem publisher = publishersComboBox.getItemAt(i);
+			if (publisher.getId() == publisherId) {
+				publishersComboBox.setSelectedIndex(i);
+				break;
+			}
+		}
+	}
+
+	private void setGenresCombox(int genreId) {
+		for (int i = 0; i < genresComboBox.getItemCount(); i++) {
+			ComboBoxItem genre = genresComboBox.getItemAt(i);
+			if (genre.getId() == genreId) {
+				genresComboBox.setSelectedIndex(i);
+				break;
+			}
+		}
+	}
+
+	class AddAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				Connection connection = DbConnection.getConnection();
+				String query = "INSERT INTO game(TITLE, DESCRIPTION, RELEASE_DATE, PUBLISHER_ID, GENRE_ID) VALUES(?,?,?,?,?)";
+				PreparedStatement statement = connection.prepareStatement(query);
+				statement = connection.prepareStatement(query);
+				statement.setString(1, titleField.getText());
+				statement.setString(2, descriptionField.getText());
+				statement.setDate(3, new Date(releaseDateChooser.getDate().getTime()));
+				statement.setInt(4, ((ComboBoxItem) publishersComboBox.getSelectedItem()).getId());
+				statement.setInt(5, ((ComboBoxItem) genresComboBox.getSelectedItem()).getId());
+
+				statement.execute();
+			} catch (SQLException ex) {
+				System.out.println("Error while trying to insert game in DB:");
+				System.out.println(ex.getMessage());
+			}
+
+			loadData();
+			clearForm();
+		}
+	}
+
+	class EditAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				Connection connection = DbConnection.getConnection();
+				String query = "UPDATE game SET TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, PUBLISHER_ID = ?, GENRE_ID = ? WHERE id = ?";
+				PreparedStatement statement = connection.prepareStatement(query);
+				statement = connection.prepareStatement(query);
+				statement.setString(1, titleField.getText());
+				statement.setString(2, descriptionField.getText());
+				statement.setDate(3, new Date(releaseDateChooser.getDate().getTime()));
+				statement.setInt(4, ((ComboBoxItem) publishersComboBox.getSelectedItem()).getId());
+				statement.setInt(5, ((ComboBoxItem) genresComboBox.getSelectedItem()).getId());
+				statement.setInt(6, id);
+
+				statement.execute();
+			} catch (SQLException ex) {
+				System.out.println("Error while trying to update game in DB:");
+				System.out.println(ex.getMessage());
+			}
+
+			loadData();
+			clearForm();
+		}
+	}
+
+	class DeleteAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				Connection connection = DbConnection.getConnection();
+				String query = "DELETE publisher WHERE id = ?";
+				PreparedStatement statement = connection.prepareStatement(query);
+				statement = connection.prepareStatement(query);
+				statement.setInt(1, id);
+
+				statement.execute();
+			} catch (SQLException ex) {
+				System.out.println("Error while trying to delete game in DB:");
+				System.out.println(ex.getMessage());
+			}
+
+			loadData();
+			clearForm();
+		}
+	}
+
+	class MouseAction implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			int row = table.getSelectedRow();
+			id = Integer.parseInt(table.getValueAt(row, 0).toString());
+			titleField.setText(table.getValueAt(row, 1).toString());
+			descriptionField.setText(table.getValueAt(row, 2).toString());
+			releaseDateChooser.setDate(Date.valueOf(table.getValueAt(row, 3).toString()));
+			int genreId = Integer.parseInt(table.getValueAt(row, 4).toString());
+			setGenresCombox(genreId);
+			int publisherId = Integer.parseInt(table.getValueAt(row, 5).toString());
+			setPublishersCombox(publisherId);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
 	}
 }

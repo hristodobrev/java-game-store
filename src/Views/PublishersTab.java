@@ -154,6 +154,16 @@ public class PublishersTab extends BaseTab {
 		return countries.toArray(new ComboBoxItem[0]);
 	}
 
+	private void setCountryCombox(int countryId) {
+		for (int i = 0; i < countriesComboBox.getItemCount(); i++) {
+			ComboBoxItem country = countriesComboBox.getItemAt(i);
+			if (country.getId() == countryId) {
+				countriesComboBox.setSelectedIndex(i);
+				break;
+			}
+		}
+	}
+
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -174,16 +184,6 @@ public class PublishersTab extends BaseTab {
 
 			loadData();
 			clearForm();
-		}
-	}
-
-	private void setCountryCombox(int countryId) {
-		for (int i = 0; i < countriesComboBox.getItemCount(); i++) {
-			ComboBoxItem country = countriesComboBox.getItemAt(i);
-			if (country.getId() == countryId) {
-				countriesComboBox.setSelectedIndex(i);
-				break;
-			}
 		}
 	}
 
@@ -223,7 +223,7 @@ public class PublishersTab extends BaseTab {
 
 				statement.execute();
 			} catch (SQLException ex) {
-				System.out.println("Error while trying to publisher genre in DB:");
+				System.out.println("Error while trying to delete publisher in DB:");
 				System.out.println(ex.getMessage());
 			}
 
