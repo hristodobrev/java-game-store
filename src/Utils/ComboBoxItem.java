@@ -13,7 +13,8 @@ public class ComboBoxItem {
 		return id;
 	}
 
-	public String getName() {
+	@Override
+	public String toString() {
 		return name;
 	}
 }

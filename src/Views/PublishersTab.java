@@ -14,6 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -22,14 +24,13 @@ import javax.swing.JTextField;
 
 import Database.DbConnection;
 import Utils.ComboBoxItem;
-import Utils.ComboBoxRenderer;
 
 public class PublishersTab extends BaseTab {
 	private int id;
 
 	private JTextField nameField = new JTextField();
 	private JTextField descriptionField = new JTextField();
-	JComboBox<ComboBoxItem> countriesComboBox;
+	private JComboBox<ComboBoxItem> countriesComboBox;
 
 	public PublishersTab() {
 		super("publisher");
@@ -79,9 +80,7 @@ public class PublishersTab extends BaseTab {
 		gbc.gridy = 2;
 		formPanel.add(countriesLabel, gbc);
 
-		List<ComboBoxItem> countries = getCountries();
-		countriesComboBox = new JComboBox<ComboBoxItem>(countries.toArray(new ComboBoxItem[0]));
-		countriesComboBox.setRenderer(new ComboBoxRenderer());
+		countriesComboBox = new JComboBox<ComboBoxItem>(getCountries());
 		gbc.gridx = 1;
 		gbc.gridwidth = 2;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -129,7 +128,15 @@ public class PublishersTab extends BaseTab {
 		descriptionField.setText("");
 	}
 
-	private List<ComboBoxItem> getCountries() {
+	@Override
+	public void loadData() {
+		super.loadData();
+
+		DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<ComboBoxItem>(getCountries());
+		countriesComboBox.setModel(model);
+	}
+
+	private ComboBoxItem[] getCountries() {
 		List<ComboBoxItem> countries = new ArrayList<ComboBoxItem>();
 
 		try {
@@ -144,7 +151,7 @@ public class PublishersTab extends BaseTab {
 			e.printStackTrace();
 		}
 
-		return countries;
+		return countries.toArray(new ComboBoxItem[0]);
 	}
 
 	class AddAction implements ActionListener {
