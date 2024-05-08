@@ -4,12 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import Database.DbConnection;
+import Utils.ComboBoxItem;
 import Utils.GameStoreTableModel;
 
 public abstract class BaseTab {
@@ -33,7 +36,7 @@ public abstract class BaseTab {
 		return panel;
 	}
 
-	public void loadData() {
+	protected void loadData() {
 		Connection connection = DbConnection.getConnection();
 		try {
 			String query = this.query;
@@ -46,5 +49,24 @@ public abstract class BaseTab {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected ComboBoxItem[] getComboBox(String tableName) {
+		List<ComboBoxItem> genres = new ArrayList<ComboBoxItem>();
+
+		try {
+			Connection connection = DbConnection.getConnection();
+			PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM " + tableName);
+			ResultSet resultSet = statement.executeQuery();
+
+			genres.add(new ComboBoxItem(0, "All"));
+			while (resultSet.next()) {
+				genres.add(new ComboBoxItem(resultSet.getInt("id"), resultSet.getString("name")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return genres.toArray(new ComboBoxItem[0]);
 	}
 }

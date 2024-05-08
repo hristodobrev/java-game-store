@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +30,13 @@ import com.toedter.calendar.JDateChooser;
 
 import Database.DbConnection;
 import Utils.ComboBoxItem;
+import Utils.GameStoreTableModel;
 import Views.PublishersTab.AddAction;
 import Views.PublishersTab.DeleteAction;
 import Views.PublishersTab.EditAction;
 import Views.PublishersTab.MouseAction;
 
-public class GamesTab extends BaseTab {
+public class StoreTab extends BaseTab {
 	private int id;
 
 	private JTextField titleField = new JTextField();
@@ -43,7 +45,7 @@ public class GamesTab extends BaseTab {
 	private JComboBox<ComboBoxItem> genresComboBox;
 	private JComboBox<ComboBoxItem> publishersComboBox;
 
-	public GamesTab() {
+	public StoreTab() {
 		super("game", "SELECT g.id, g.title, g.description, g.release_date as `release date`, gr.id as `genre_id`, gr.name as `genre`, p.id as `publisher_id`, p.name as `publisher` FROM game g INNER JOIN genre gr ON gr.id = g.genre_id INNER JOIN publisher p ON p.id = g.publisher_id");
 
 		panel.setLayout(new GridBagLayout());
@@ -136,15 +138,12 @@ public class GamesTab extends BaseTab {
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
-		JButton addButton = new JButton("Add");
-		addButton.addActionListener(new AddAction());
-		buttonsPanel.add(addButton);
-		JButton editButton = new JButton("Edit");
-		editButton.addActionListener(new EditAction());
-		buttonsPanel.add(editButton);
-		JButton deleteButton = new JButton("Delete");
-		deleteButton.addActionListener(new DeleteAction());
-		buttonsPanel.add(deleteButton);
+		JButton clearButton = new JButton("Clear Form");
+		clearButton.addActionListener(new ClearAction());
+		buttonsPanel.add(clearButton);
+		JButton searchButton = new JButton("Search");
+		searchButton.addActionListener(new SearchAction());
+		buttonsPanel.add(searchButton);
 
 		// Table
 		gbc = new GridBagConstraints();
@@ -164,125 +163,87 @@ public class GamesTab extends BaseTab {
 		gbc.weighty = 1.0;
 		gbc.insets = new Insets(5, 5, 5, 5);
 		panel.add(tableScroll, gbc);
-
-		table.addMouseListener(new MouseAction());
 	}
 
 	private void clearForm() {
 		titleField.setText("");
 		descriptionField.setText("");
+		releaseDateChooser.setDate(null);
+		ComboBoxItem.setSelectedId(0, genresComboBox);
+		ComboBoxItem.setSelectedId(0, publishersComboBox);
 	}
 
 	@Override
 	public void loadData() {
-		super.loadData();
+	    Connection connection = DbConnection.getConnection();
+	    try {
+	        String query = this.query + " WHERE 1=1";
+	        List<Object> parameters = new ArrayList<>();
+	        
+	        if(!titleField.getText().isBlank()) {
+	            query += " AND upper(g.title) LIKE ?";
+	            parameters.add("%" + titleField.getText().toUpperCase() + "%");
+	        }
+	        
+	        if(!descriptionField.getText().isBlank()) {
+	            query += " AND upper(g.description) LIKE ?";
+	            parameters.add("%" + descriptionField.getText().toUpperCase() + "%");
+	        }
+	        
+	        if(releaseDateChooser.getDate() != null) {
+	            query += " AND g.release_date = ?";
+	            parameters.add(new Date(releaseDateChooser.getDate().getTime()));
+	        }
+	        
+	        int publisherId = ((ComboBoxItem) publishersComboBox.getSelectedItem()).getId();
+	        if(publisherId != 0) {
+	            query += " AND g.publisher_id = ?";
+	            parameters.add(publisherId);
+	        }
+	        
+	        int genreId = ((ComboBoxItem) genresComboBox.getSelectedItem()).getId();
+	        if(genreId != 0) {
+	            query += " AND g.genre_id = ?";
+	            parameters.add(genreId);
+	        }
 
-		table.removeColumn(table.getColumnModel().getColumn(0));
-		table.removeColumn(table.getColumnModel().getColumn(3));
-		table.removeColumn(table.getColumnModel().getColumn(4));
-		genresComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getComboBox("genre")));
-		publishersComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getComboBox("publisher")));
+	        PreparedStatement statement = connection.prepareStatement(query);
+	        
+	        // Bind parameters
+	        int parameterIndex = 1;
+	        for (Object parameter : parameters) {
+	            if (parameter instanceof Date) {
+	                statement.setDate(parameterIndex++, (Date) parameter);
+	            } else {
+	                statement.setString(parameterIndex++, (String) parameter);
+	            }
+	        }
+	        
+	        ResultSet result = statement.executeQuery();
+
+	        table.setModel(new GameStoreTableModel(result));
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    table.removeColumn(table.getColumnModel().getColumn(0));
+	    table.removeColumn(table.getColumnModel().getColumn(3));
+	    table.removeColumn(table.getColumnModel().getColumn(4));
 	}
 
-	class AddAction implements ActionListener {
+	class ClearAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			try {
-				Connection connection = DbConnection.getConnection();
-				String query = "INSERT INTO game(TITLE, DESCRIPTION, RELEASE_DATE, PUBLISHER_ID, GENRE_ID) VALUES(?,?,?,?,?)";
-				PreparedStatement statement = connection.prepareStatement(query);
-				statement = connection.prepareStatement(query);
-				statement.setString(1, titleField.getText());
-				statement.setString(2, descriptionField.getText());
-				statement.setDate(3, new Date(releaseDateChooser.getDate().getTime()));
-				statement.setInt(4, ((ComboBoxItem) publishersComboBox.getSelectedItem()).getId());
-				statement.setInt(5, ((ComboBoxItem) genresComboBox.getSelectedItem()).getId());
-
-				statement.execute();
-			} catch (SQLException ex) {
-				System.out.println("Error while trying to insert game in DB:");
-				System.out.println(ex.getMessage());
-			}
-
-			loadData();
 			clearForm();
 		}
 	}
-
-	class EditAction implements ActionListener {
+	
+	class SearchAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			try {
-				Connection connection = DbConnection.getConnection();
-				String query = "UPDATE game SET TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, PUBLISHER_ID = ?, GENRE_ID = ? WHERE id = ?";
-				PreparedStatement statement = connection.prepareStatement(query);
-				statement = connection.prepareStatement(query);
-				statement.setString(1, titleField.getText());
-				statement.setString(2, descriptionField.getText());
-				statement.setDate(3, new Date(releaseDateChooser.getDate().getTime()));
-				statement.setInt(4, ((ComboBoxItem) publishersComboBox.getSelectedItem()).getId());
-				statement.setInt(5, ((ComboBoxItem) genresComboBox.getSelectedItem()).getId());
-				statement.setInt(6, id);
-
-				statement.execute();
-			} catch (SQLException ex) {
-				System.out.println("Error while trying to update game in DB:");
-				System.out.println(ex.getMessage());
-			}
-
 			loadData();
-			clearForm();
-		}
-	}
-
-	class DeleteAction implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				Connection connection = DbConnection.getConnection();
-				String query = "DELETE publisher WHERE id = ?";
-				PreparedStatement statement = connection.prepareStatement(query);
-				statement = connection.prepareStatement(query);
-				statement.setInt(1, id);
-
-				statement.execute();
-			} catch (SQLException ex) {
-				System.out.println("Error while trying to delete game in DB:");
-				System.out.println(ex.getMessage());
-			}
-
-			loadData();
-			clearForm();
-		}
-	}
-
-	class MouseAction implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			int row = table.getSelectedRow();
-			id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
-			titleField.setText(table.getModel().getValueAt(row, 1).toString());
-			descriptionField.setText(table.getModel().getValueAt(row, 2).toString());
-			releaseDateChooser.setDate(Date.valueOf(table.getModel().getValueAt(row, 3).toString()));
-			int genreId = Integer.parseInt(table.getModel().getValueAt(row, 4).toString());
-			ComboBoxItem.setSelectedId(genreId, genresComboBox);
-			int publisherId = Integer.parseInt(table.getModel().getValueAt(row, 6).toString());
-			ComboBoxItem.setSelectedId(publisherId, publishersComboBox);		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
 		}
 	}
 }

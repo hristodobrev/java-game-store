@@ -80,7 +80,7 @@ public class PublishersTab extends BaseTab {
 		gbc.gridy = 2;
 		formPanel.add(countriesLabel, gbc);
 
-		countriesComboBox = new JComboBox<ComboBoxItem>(getCountries());
+		countriesComboBox = new JComboBox<ComboBoxItem>(getComboBox("country"));
 		gbc.gridx = 1;
 		gbc.gridwidth = 2;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -134,38 +134,10 @@ public class PublishersTab extends BaseTab {
 
 		table.removeColumn(table.getColumnModel().getColumn(0));
 		table.removeColumn(table.getColumnModel().getColumn(2));
-		DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<ComboBoxItem>(getCountries());
+		DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<ComboBoxItem>(getComboBox("country"));
 		countriesComboBox.setModel(model);
 	}
-
-	private ComboBoxItem[] getCountries() {
-		List<ComboBoxItem> countries = new ArrayList<ComboBoxItem>();
-
-		try {
-			Connection connection = DbConnection.getConnection();
-			PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM country");
-			ResultSet resultSet = statement.executeQuery();
-
-			while (resultSet.next()) {
-				countries.add(new ComboBoxItem(resultSet.getInt("id"), resultSet.getString("name")));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return countries.toArray(new ComboBoxItem[0]);
-	}
-
-	private void setCountryCombox(int countryId) {
-		for (int i = 0; i < countriesComboBox.getItemCount(); i++) {
-			ComboBoxItem country = countriesComboBox.getItemAt(i);
-			if (country.getId() == countryId) {
-				countriesComboBox.setSelectedIndex(i);
-				break;
-			}
-		}
-	}
-
+	
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -242,7 +214,7 @@ public class PublishersTab extends BaseTab {
 			nameField.setText(table.getModel().getValueAt(row, 1).toString());
 			descriptionField.setText(table.getModel().getValueAt(row, 2).toString());
 			int countryId = Integer.parseInt(table.getModel().getValueAt(row, 3).toString());
-			setCountryCombox(countryId);
+			ComboBoxItem.setSelectedId(countryId, countriesComboBox);
 		}
 
 		@Override

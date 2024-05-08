@@ -7,6 +7,7 @@ import Views.CountriesTab;
 import Views.GamesTab;
 import Views.GenresTab;
 import Views.PublishersTab;
+import Views.StoreTab;
 
 public class MainFrame extends JFrame {
 	private JTabbedPane tab = new JTabbedPane();
@@ -15,6 +16,7 @@ public class MainFrame extends JFrame {
 	private PublishersTab publishersTab = new PublishersTab();
 	private GenresTab genresTab = new GenresTab();
 	private CountriesTab countriesTab = new CountriesTab();
+	private StoreTab storeTab = new StoreTab();
 
 	public MainFrame() {
 		this.setTitle("Game Store");
@@ -24,6 +26,7 @@ public class MainFrame extends JFrame {
 		tab.add(publishersTab.getPanel(), "Publishers");
 		tab.add(genresTab.getPanel(), "Genres");
 		tab.add(countriesTab.getPanel(), "Countries");
+		tab.add(storeTab.getPanel(), "Store");
 
 		tab.addChangeListener(getTabChangeListener());
 
@@ -49,6 +52,9 @@ public class MainFrame extends JFrame {
 					break;
 				case 3:
 					countriesTab.loadData();
+					break;
+				case 4:
+					storeTab.loadData();
 					break;
 				}
 			}
