@@ -86,6 +86,13 @@ public class CountriesTab extends BaseTab {
 		nameField.setText("");
 	}
 
+	@Override
+	public void loadData() {
+		super.loadData();
+
+		table.removeColumn(table.getColumnModel().getColumn(0));
+	}
+
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -154,8 +161,8 @@ public class CountriesTab extends BaseTab {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			int row = table.getSelectedRow();
-			id = Integer.parseInt(table.getValueAt(row, 0).toString());
-			nameField.setText(table.getValueAt(row, 1).toString());
+			id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+			nameField.setText(table.getModel().getValueAt(row, 1).toString());
 		}
 
 		@Override

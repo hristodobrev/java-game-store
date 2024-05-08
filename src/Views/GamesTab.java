@@ -44,7 +44,7 @@ public class GamesTab extends BaseTab {
 	private JComboBox<ComboBoxItem> publishersComboBox;
 
 	public GamesTab() {
-		super("game");
+		super("game", "SELECT g.id, g.title, g.description, g.release_date as `release date`, gr.id as `genre_id`, gr.name as `genre`, p.id as `publisher_id`, p.name as `publisher` FROM game g INNER JOIN genre gr ON gr.id = g.genre_id INNER JOIN publisher p ON p.id = g.publisher_id");
 
 		panel.setLayout(new GridBagLayout());
 
@@ -83,7 +83,7 @@ public class GamesTab extends BaseTab {
 		gbc.insets = new Insets(0, 0, 5, 0);
 		formPanel.add(descriptionField, gbc);
 
-		// Datepicker
+		// Release Date
 		JLabel releaseDateLabel = new JLabel("Release Date");
 		releaseDateLabel.setMinimumSize(new Dimension(100, releaseDateLabel.getMinimumSize().height));
 		releaseDateLabel.setPreferredSize(new Dimension(100, releaseDateLabel.getPreferredSize().height));
@@ -97,6 +97,7 @@ public class GamesTab extends BaseTab {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1.0;
 		gbc.insets = new Insets(0, 0, 0, 0);
+		releaseDateChooser.setDateFormatString("yyyy-MM-dd");
 		formPanel.add(releaseDateChooser, gbc);
 		
 		// Genres
@@ -176,6 +177,9 @@ public class GamesTab extends BaseTab {
 	public void loadData() {
 		super.loadData();
 
+		table.removeColumn(table.getColumnModel().getColumn(0));
+		table.removeColumn(table.getColumnModel().getColumn(3));
+		table.removeColumn(table.getColumnModel().getColumn(4));
 		genresComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getGenres()));
 		publishersComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getPublishers()));
 	}
@@ -312,13 +316,13 @@ public class GamesTab extends BaseTab {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			int row = table.getSelectedRow();
-			id = Integer.parseInt(table.getValueAt(row, 0).toString());
-			titleField.setText(table.getValueAt(row, 1).toString());
-			descriptionField.setText(table.getValueAt(row, 2).toString());
-			releaseDateChooser.setDate(Date.valueOf(table.getValueAt(row, 3).toString()));
-			int genreId = Integer.parseInt(table.getValueAt(row, 4).toString());
+			id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+			titleField.setText(table.getModel().getValueAt(row, 1).toString());
+			descriptionField.setText(table.getModel().getValueAt(row, 2).toString());
+			releaseDateChooser.setDate(Date.valueOf(table.getModel().getValueAt(row, 3).toString()));
+			int genreId = Integer.parseInt(table.getModel().getValueAt(row, 4).toString());
 			setGenresCombox(genreId);
-			int publisherId = Integer.parseInt(table.getValueAt(row, 5).toString());
+			int publisherId = Integer.parseInt(table.getModel().getValueAt(row, 6).toString());
 			setPublishersCombox(publisherId);
 		}
 

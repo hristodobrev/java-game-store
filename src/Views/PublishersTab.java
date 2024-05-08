@@ -33,7 +33,7 @@ public class PublishersTab extends BaseTab {
 	private JComboBox<ComboBoxItem> countriesComboBox;
 
 	public PublishersTab() {
-		super("publisher");
+		super("publisher", "SELECT p.id, p.name, p.description, c.id as country_id, c.name as `country name` FROM publisher p INNER JOIN country c on p.country_id = c.id");
 
 		panel.setLayout(new GridBagLayout());
 
@@ -119,7 +119,7 @@ public class PublishersTab extends BaseTab {
 		gbc.weighty = 1.0;
 		gbc.insets = new Insets(5, 5, 5, 5);
 		panel.add(tableScroll, gbc);
-
+		
 		table.addMouseListener(new MouseAction());
 	}
 
@@ -132,6 +132,8 @@ public class PublishersTab extends BaseTab {
 	public void loadData() {
 		super.loadData();
 
+		table.removeColumn(table.getColumnModel().getColumn(0));
+		table.removeColumn(table.getColumnModel().getColumn(2));
 		DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<ComboBoxItem>(getCountries());
 		countriesComboBox.setModel(model);
 	}
@@ -236,10 +238,10 @@ public class PublishersTab extends BaseTab {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			int row = table.getSelectedRow();
-			id = Integer.parseInt(table.getValueAt(row, 0).toString());
-			nameField.setText(table.getValueAt(row, 1).toString());
-			descriptionField.setText(table.getValueAt(row, 2).toString());
-			int countryId = Integer.parseInt(table.getValueAt(row, 3).toString());
+			id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+			nameField.setText(table.getModel().getValueAt(row, 1).toString());
+			descriptionField.setText(table.getModel().getValueAt(row, 2).toString());
+			int countryId = Integer.parseInt(table.getModel().getValueAt(row, 3).toString());
 			setCountryCombox(countryId);
 		}
 

@@ -12,12 +12,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Database.DbConnection;
+import Utils.ComboBoxItem;
 
 public class GenresTab extends BaseTab {
 	private int id;
@@ -104,6 +106,13 @@ public class GenresTab extends BaseTab {
 		descriptionField.setText("");
 	}
 
+	@Override
+	public void loadData() {
+		super.loadData();
+
+		table.removeColumn(table.getColumnModel().getColumn(0));
+	}
+
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -174,9 +183,9 @@ public class GenresTab extends BaseTab {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			int row = table.getSelectedRow();
-			id = Integer.parseInt(table.getValueAt(row, 0).toString());
-			nameField.setText(table.getValueAt(row, 1).toString());
-			descriptionField.setText(table.getValueAt(row, 2).toString());
+			id = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
+			nameField.setText(table.getModel().getValueAt(row, 1).toString());
+			descriptionField.setText(table.getModel().getValueAt(row, 2).toString());
 		}
 
 		@Override

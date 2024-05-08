@@ -17,9 +17,16 @@ public abstract class BaseTab {
 	protected JTable table = new JTable();
 	protected JScrollPane tableScroll = new JScrollPane(table);
 	protected String tableName;
+	protected String query = "SELECT * FROM ";
 
 	protected BaseTab(String tableName) {
 		this.tableName = tableName;
+		this.query += tableName;
+	}
+	
+	protected BaseTab(String tableName, String query) {
+		this.tableName = tableName;
+		this.query = query;
 	}
 
 	public JPanel getPanel() {
@@ -29,7 +36,7 @@ public abstract class BaseTab {
 	public void loadData() {
 		Connection connection = DbConnection.getConnection();
 		try {
-			String query = "SELECT * FROM " + this.tableName;
+			String query = this.query;
 			PreparedStatement statement = connection.prepareStatement(query);
 			ResultSet result = statement.executeQuery();
 
