@@ -1,24 +1,16 @@
 package Views;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -37,57 +29,20 @@ public class PublishersTab extends BaseTab {
 
 		panel.setLayout(new GridBagLayout());
 
-		// Name
 		JPanel formPanel = new JPanel(new GridBagLayout());
-		JLabel nameLabel = new JLabel("Name");
-		nameLabel.setMinimumSize(new Dimension(70, nameLabel.getMinimumSize().height));
-		nameLabel.setPreferredSize(new Dimension(70, nameLabel.getPreferredSize().height));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		formPanel.add(nameLabel, gbc);
 
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		formPanel.add(nameField, gbc);
+		// Name
+		addLabelToPanel("Name", formPanel, 0, 0);
+		addTextFieldToPanel(nameField, formPanel, 1, 0);
 
 		// Description
-		JLabel descriptionLabel = new JLabel("Description");
-		descriptionLabel.setMinimumSize(new Dimension(70, descriptionLabel.getMinimumSize().height));
-		descriptionLabel.setPreferredSize(new Dimension(70, descriptionLabel.getPreferredSize().height));
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		formPanel.add(descriptionLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(0, 0, 0, 0);
-		formPanel.add(descriptionField, gbc);
+		addLabelToPanel("Description", formPanel, 0, 1);
+		addTextFieldToPanel(descriptionField, formPanel, 1, 1);
 
 		// Countries
-		JLabel countriesLabel = new JLabel("Countries");
-		countriesLabel.setMinimumSize(new Dimension(70, countriesLabel.getMinimumSize().height));
-		countriesLabel.setPreferredSize(new Dimension(70, countriesLabel.getPreferredSize().height));
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		formPanel.add(countriesLabel, gbc);
-
+		addLabelToPanel("Countries", formPanel, 0, 2);
 		countriesComboBox = new JComboBox<ComboBoxItem>(getComboBox("country"));
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(5, 0, 5, 0);
-		formPanel.add(countriesComboBox, gbc);
+		addComboBoxToPanel(countriesComboBox, formPanel, 1, 2);
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
@@ -102,23 +57,7 @@ public class PublishersTab extends BaseTab {
 		buttonsPanel.add(deleteButton);
 
 		// Table
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		panel.add(formPanel, gbc);
-
-		gbc.gridy = 1;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		panel.add(buttonsPanel, gbc);
-
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridy = 2;
-		gbc.weightx = 1.0;
-		gbc.weighty = 1.0;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		panel.add(tableScroll, gbc);
+		setupPanel(formPanel, buttonsPanel);
 		
 		table.addMouseListener(new MouseAction());
 	}

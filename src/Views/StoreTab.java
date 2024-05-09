@@ -1,44 +1,28 @@
 package Views;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 
 import Database.DbConnection;
 import Utils.ComboBoxItem;
 import Utils.GameStoreTableModel;
-import Views.PublishersTab.AddAction;
-import Views.PublishersTab.DeleteAction;
-import Views.PublishersTab.EditAction;
-import Views.PublishersTab.MouseAction;
 
 public class StoreTab extends BaseTab {
-	private int id;
-
 	private JTextField titleField = new JTextField();
 	private JTextField descriptionField = new JTextField();
 	JDateChooser releaseDateChooser = new JDateChooser();
@@ -50,91 +34,30 @@ public class StoreTab extends BaseTab {
 
 		panel.setLayout(new GridBagLayout());
 
-		// Title
 		JPanel formPanel = new JPanel(new GridBagLayout());
-		JLabel titleLabel = new JLabel("Title");
-		titleLabel.setMinimumSize(new Dimension(100, titleLabel.getMinimumSize().height));
-		titleLabel.setPreferredSize(new Dimension(100, titleLabel.getPreferredSize().height));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		formPanel.add(titleLabel, gbc);
 
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		formPanel.add(titleField, gbc);
+		// Title
+		addLabelToPanel("Title", formPanel, 0, 0);
+		addTextFieldToPanel(titleField, formPanel, 1, 0);
 
 		// Description
-		JLabel descriptionLabel = new JLabel("Description");
-		descriptionLabel.setMinimumSize(new Dimension(100, descriptionLabel.getMinimumSize().height));
-		descriptionLabel.setPreferredSize(new Dimension(100, descriptionLabel.getPreferredSize().height));
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		formPanel.add(descriptionLabel, gbc);
-
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		formPanel.add(descriptionField, gbc);
+		addLabelToPanel("Description", formPanel, 0, 1);
+		addTextFieldToPanel(descriptionField, formPanel, 1, 1);
 
 		// Release Date
-		JLabel releaseDateLabel = new JLabel("Release Date");
-		releaseDateLabel.setMinimumSize(new Dimension(100, releaseDateLabel.getMinimumSize().height));
-		releaseDateLabel.setPreferredSize(new Dimension(100, releaseDateLabel.getPreferredSize().height));
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		formPanel.add(releaseDateLabel, gbc);
-		
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(0, 0, 0, 0);
+		addLabelToPanel("Release Date", formPanel, 0, 2);
 		releaseDateChooser.setDateFormatString("yyyy-MM-dd");
-		formPanel.add(releaseDateChooser, gbc);
-		
-		// Genres
-		JLabel genresLabel = new JLabel("Genres");
-		genresLabel.setMinimumSize(new Dimension(100, genresLabel.getMinimumSize().height));
-		genresLabel.setPreferredSize(new Dimension(100, genresLabel.getPreferredSize().height));
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		formPanel.add(genresLabel, gbc);
+		addDateFieldToPanel(releaseDateChooser, formPanel, 1, 2);
 
+		// Genres
+		addLabelToPanel("Genres", formPanel, 0, 3);
 		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre"));
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(5, 0, 5, 0);
-		formPanel.add(genresComboBox, gbc);
+		addComboBoxToPanel(genresComboBox, formPanel, 1, 3);
 
 		// Publishers
-		JLabel publishersLabel = new JLabel("Publishers");
-		publishersLabel.setMinimumSize(new Dimension(100, publishersLabel.getMinimumSize().height));
-		publishersLabel.setPreferredSize(new Dimension(100, publishersLabel.getPreferredSize().height));
-		gbc.gridx = 0;
-		gbc.gridy = 4;
-		formPanel.add(publishersLabel, gbc);
-
+		addLabelToPanel("Publishers", formPanel, 0, 4);
 		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher"));
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(5, 0, 5, 0);
-		formPanel.add(publishersComboBox, gbc);
+		addComboBoxToPanel(publishersComboBox, formPanel, 1, 4);
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
@@ -146,23 +69,7 @@ public class StoreTab extends BaseTab {
 		buttonsPanel.add(searchButton);
 
 		// Table
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		panel.add(formPanel, gbc);
-
-		gbc.gridy = 1;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		panel.add(buttonsPanel, gbc);
-
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridy = 2;
-		gbc.weightx = 1.0;
-		gbc.weighty = 1.0;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		panel.add(tableScroll, gbc);
+		setupPanel(formPanel, buttonsPanel);
 	}
 
 	private void clearForm() {

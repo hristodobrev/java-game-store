@@ -1,9 +1,6 @@
 package Views;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -13,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -29,24 +25,11 @@ public class CountriesTab extends BaseTab {
 
 		panel.setLayout(new GridBagLayout());
 
-		// Name
 		JPanel formPanel = new JPanel(new GridBagLayout());
-		JLabel nameLabel = new JLabel("Name");
-		nameLabel.setMinimumSize(new Dimension(70, nameLabel.getMinimumSize().height));
-		nameLabel.setPreferredSize(new Dimension(70, nameLabel.getPreferredSize().height));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.WEST;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		formPanel.add(nameLabel, gbc);
 
-		gbc.gridx = 1;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		formPanel.add(nameField, gbc);
+		// Name
+		addLabelToPanel("Name", formPanel, 0, 0);
+		addTextFieldToPanel(nameField, formPanel, 1, 0);
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
@@ -61,24 +44,8 @@ public class CountriesTab extends BaseTab {
 		buttonsPanel.add(deleteButton);
 
 		// Table
-		gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		panel.add(formPanel, gbc);
-
-		gbc.gridy = 1;
-		gbc.insets = new Insets(0, 0, 5, 0);
-		panel.add(buttonsPanel, gbc);
-
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.gridy = 2;
-		gbc.weightx = 1.0;
-		gbc.weighty = 1.0;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		panel.add(tableScroll, gbc);
-
+		setupPanel(formPanel, buttonsPanel);
+		
 		table.addMouseListener(new MouseAction());
 	}
 

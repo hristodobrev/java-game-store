@@ -1,5 +1,8 @@
 package Views;
 
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,9 +10,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+
+import com.toedter.calendar.JDateChooser;
 
 import Database.DbConnection;
 import Utils.ComboBoxItem;
@@ -26,7 +34,7 @@ public abstract class BaseTab {
 		this.tableName = tableName;
 		this.query += tableName;
 	}
-	
+
 	protected BaseTab(String tableName, String query) {
 		this.tableName = tableName;
 		this.query = query;
@@ -34,6 +42,74 @@ public abstract class BaseTab {
 
 	public JPanel getPanel() {
 		return panel;
+	}
+
+	protected void setupPanel(JPanel formPanel, JPanel buttonsPanel) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		panel.add(formPanel, gbc);
+
+		gbc.gridy = 1;
+		gbc.insets = new Insets(0, 0, 5, 0);
+		panel.add(buttonsPanel, gbc);
+
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.gridy = 2;
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		panel.add(tableScroll, gbc);
+	}
+	
+	protected void addLabelToPanel(String labelName, JPanel panel, int x, int y) {
+		JLabel label = new JLabel(labelName);
+		label.setMinimumSize(new Dimension(100, label.getMinimumSize().height));
+		label.setPreferredSize(new Dimension(100, label.getPreferredSize().height));
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.insets = new Insets(5, 0, 0, 0);
+		panel.add(label, gbc);
+	}
+
+	protected void addTextFieldToPanel(JTextField field, JPanel panel, int x, int y) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = 2;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 0, 0, 0);
+		gbc.weightx = 1.0;
+		panel.add(field, gbc);
+	}
+
+	protected void addDateFieldToPanel(JDateChooser field, JPanel panel, int x, int y) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = 2;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 0, 0, 0);
+		gbc.weightx = 1.0;
+		panel.add(field, gbc);
+	}
+	
+	protected void addComboBoxToPanel(JComboBox<ComboBoxItem> field, JPanel panel, int x, int y) {
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = 2;
+		gbc.gridwidth = GridBagConstraints.REMAINDER;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 0, 0, 0);
+		gbc.weightx = 1.0;
+		panel.add(field, gbc);
 	}
 
 	protected void loadData() {
