@@ -38,26 +38,26 @@ public class GamesTab extends BaseTab {
 		
 		// Title
 		addLabelToPanel("Title", formPanel, 0, 0);
-		addTextFieldToPanel(titleField, formPanel, 1, 0);
+		formPanel.add(titleField, getRightGBC(1, 0));
 
 		// Description
 		addLabelToPanel("Description", formPanel, 0, 1);
-		addTextFieldToPanel(descriptionField, formPanel, 1, 1);
+		formPanel.add(descriptionField, getRightGBC(1, 1));
 
 		// Release Date
 		addLabelToPanel("Release Date", formPanel, 0, 2);
 		releaseDateChooser.setDateFormatString("yyyy-MM-dd");
-		addDateFieldToPanel(releaseDateChooser, formPanel, 1, 2);
+		formPanel.add(releaseDateChooser, getRightGBC(1, 2));
 		
 		// Genres
 		addLabelToPanel("Genres", formPanel, 0, 3);
 		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre"));
-		addComboBoxToPanel(genresComboBox, formPanel, 1, 3);
+		formPanel.add(genresComboBox, getRightGBC(1, 3));
 
 		// Publishers
 		addLabelToPanel("Publishers", formPanel, 0, 4);
 		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher"));
-		addComboBoxToPanel(publishersComboBox, formPanel, 1, 4);
+		formPanel.add(publishersComboBox, getRightGBC(1, 4));
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();

@@ -1,6 +1,7 @@
 package Views;
 
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -27,7 +28,9 @@ public class StoreTab extends BaseTab {
 	private JTextField descriptionField = new JTextField();
 	JDateChooser releaseDateChooser = new JDateChooser();
 	private JComboBox<ComboBoxItem> genresComboBox;
+	private JTextField genreField = new JTextField();
 	private JComboBox<ComboBoxItem> publishersComboBox;
+	private JTextField publisherField = new JTextField();
 
 	public StoreTab() {
 		super("game", "SELECT g.id, g.title, g.description, g.release_date as `release date`, gr.id as `genre_id`, gr.name as `genre`, p.id as `publisher_id`, p.name as `publisher` FROM game g INNER JOIN genre gr ON gr.id = g.genre_id INNER JOIN publisher p ON p.id = g.publisher_id");
@@ -38,26 +41,36 @@ public class StoreTab extends BaseTab {
 
 		// Title
 		addLabelToPanel("Title", formPanel, 0, 0);
-		addTextFieldToPanel(titleField, formPanel, 1, 0);
+		formPanel.add(titleField, getRightGBC(1, 0));
 
 		// Description
 		addLabelToPanel("Description", formPanel, 0, 1);
-		addTextFieldToPanel(descriptionField, formPanel, 1, 1);
+		formPanel.add(descriptionField, getRightGBC(1, 1));
 
 		// Release Date
 		addLabelToPanel("Release Date", formPanel, 0, 2);
 		releaseDateChooser.setDateFormatString("yyyy-MM-dd");
-		addDateFieldToPanel(releaseDateChooser, formPanel, 1, 2);
+		formPanel.add(releaseDateChooser, getRightGBC(1, 2));
 
 		// Genres
 		addLabelToPanel("Genres", formPanel, 0, 3);
 		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre"));
-		addComboBoxToPanel(genresComboBox, formPanel, 1, 3);
+
+		JPanel genrePanel = new JPanel(new GridLayout());
+		((GridLayout)genrePanel.getLayout()).setHgap(5);
+		genrePanel.add(genresComboBox);
+		genrePanel.add(genreField);
+		formPanel.add(genrePanel, getRightGBC(1, 3));
 
 		// Publishers
 		addLabelToPanel("Publishers", formPanel, 0, 4);
 		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher"));
-		addComboBoxToPanel(publishersComboBox, formPanel, 1, 4);
+
+		JPanel publisherPanel = new JPanel(new GridLayout());
+		((GridLayout)publisherPanel.getLayout()).setHgap(5);
+		publisherPanel.add(publishersComboBox);
+		publisherPanel.add(publisherField);
+		formPanel.add(publisherPanel, getRightGBC(1,4));
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
@@ -71,11 +84,13 @@ public class StoreTab extends BaseTab {
 		// Table
 		setupPanel(formPanel, buttonsPanel);
 	}
-
+	
 	private void clearForm() {
 		titleField.setText("");
 		descriptionField.setText("");
 		releaseDateChooser.setDate(null);
+		publisherField.setText("");
+		genreField.setText("");
 		ComboBoxItem.setSelectedId(0, genresComboBox);
 		ComboBoxItem.setSelectedId(0, publishersComboBox);
 	}
@@ -108,10 +123,20 @@ public class StoreTab extends BaseTab {
 	            parameters.add(publisherId);
 	        }
 	        
+	        if(!publisherField.getText().isBlank()) {
+	        	query += " AND p.name LIKE ?";
+	        	parameters.add("%" + publisherField.getText().toUpperCase() + "%");
+	        }
+	        
 	        int genreId = ((ComboBoxItem) genresComboBox.getSelectedItem()).getId();
 	        if(genreId != 0) {
 	            query += " AND g.genre_id = ?";
 	            parameters.add(genreId);
+	        }
+	        
+	        if(!genreField.getText().isBlank()) {
+	        	query += " AND gr.name LIKE ?";
+	        	parameters.add("%" + genreField.getText().toUpperCase() + "%");
 	        }
 
 	        PreparedStatement statement = connection.prepareStatement(query);
@@ -121,11 +146,13 @@ public class StoreTab extends BaseTab {
 	        for (Object parameter : parameters) {
 	            if (parameter instanceof Date) {
 	                statement.setDate(parameterIndex++, (Date) parameter);
+	            } else if(parameter instanceof Integer) {
+	            	statement.setInt(parameterIndex, (int)parameter);
 	            } else {
 	                statement.setString(parameterIndex++, (String) parameter);
 	            }
 	        }
-	        
+
 	        ResultSet result = statement.executeQuery();
 
 	        table.setModel(new GameStoreTableModel(result));

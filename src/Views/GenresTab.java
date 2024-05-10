@@ -30,11 +30,11 @@ public class GenresTab extends BaseTab {
 
 		// Name
 		addLabelToPanel("Name", formPanel, 0, 0);
-		addTextFieldToPanel(nameField, formPanel, 1, 0);
+		formPanel.add(nameField, getRightGBC(1, 0));
 		
 		// Description
 		addLabelToPanel("Description", formPanel, 0, 1);
-		addTextFieldToPanel(descriptionField, formPanel, 1, 1);
+		formPanel.add(descriptionField, getRightGBC(1, 1));
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();

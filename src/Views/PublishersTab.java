@@ -33,16 +33,16 @@ public class PublishersTab extends BaseTab {
 
 		// Name
 		addLabelToPanel("Name", formPanel, 0, 0);
-		addTextFieldToPanel(nameField, formPanel, 1, 0);
+		formPanel.add(nameField, getRightGBC(1, 0));
 
 		// Description
 		addLabelToPanel("Description", formPanel, 0, 1);
-		addTextFieldToPanel(descriptionField, formPanel, 1, 1);
+		formPanel.add(descriptionField, getRightGBC(1, 1));
 
 		// Countries
 		addLabelToPanel("Countries", formPanel, 0, 2);
 		countriesComboBox = new JComboBox<ComboBoxItem>(getComboBox("country"));
-		addComboBoxToPanel(countriesComboBox, formPanel, 1, 2);
+		formPanel.add(countriesComboBox, getRightGBC(1, 2));
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();

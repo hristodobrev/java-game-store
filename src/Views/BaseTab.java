@@ -10,15 +10,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-
-import com.toedter.calendar.JDateChooser;
-
 import Database.DbConnection;
 import Utils.ComboBoxItem;
 import Utils.GameStoreTableModel;
@@ -68,48 +63,30 @@ public abstract class BaseTab {
 		JLabel label = new JLabel(labelName);
 		label.setMinimumSize(new Dimension(100, label.getMinimumSize().height));
 		label.setPreferredSize(new Dimension(100, label.getPreferredSize().height));
+
+		panel.add(label, getLeftGBC(x, y));
+	}
+	
+	protected GridBagConstraints getLeftGBC(int x, int y) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = x;
 		gbc.gridy = y;
 		gbc.anchor = GridBagConstraints.WEST;
 		gbc.insets = new Insets(5, 0, 0, 0);
-		panel.add(label, gbc);
-	}
-
-	protected void addTextFieldToPanel(JTextField field, JPanel panel, int x, int y) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 0, 0, 0);
-		gbc.weightx = 1.0;
-		panel.add(field, gbc);
-	}
-
-	protected void addDateFieldToPanel(JDateChooser field, JPanel panel, int x, int y) {
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = x;
-		gbc.gridy = y;
-		gbc.gridwidth = 2;
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 0, 0, 0);
-		gbc.weightx = 1.0;
-		panel.add(field, gbc);
+		
+		return gbc;
 	}
 	
-	protected void addComboBoxToPanel(JComboBox<ComboBoxItem> field, JPanel panel, int x, int y) {
+	protected GridBagConstraints getRightGBC(int x, int y) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = x;
 		gbc.gridy = y;
-		gbc.gridwidth = 2;
 		gbc.gridwidth = GridBagConstraints.REMAINDER;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(5, 0, 0, 0);
 		gbc.weightx = 1.0;
-		panel.add(field, gbc);
+		
+		return gbc;
 	}
 
 	protected void loadData() {

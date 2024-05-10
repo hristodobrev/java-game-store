@@ -29,7 +29,7 @@ public class CountriesTab extends BaseTab {
 
 		// Name
 		addLabelToPanel("Name", formPanel, 0, 0);
-		addTextFieldToPanel(nameField, formPanel, 1, 0);
+		formPanel.add(nameField, getRightGBC(1, 0));
 
 		// Buttons
 		JPanel buttonsPanel = new JPanel();
