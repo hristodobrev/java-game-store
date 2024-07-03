@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -65,10 +66,28 @@ public class GenresTab extends BaseTab {
 
 		table.removeColumn(table.getColumnModel().getColumn(0));
 	}
+	
+	private boolean validateFields() {
+		if(nameField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Name is required!");
+			return false;
+		}
+
+		if(descriptionField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Description is required!");
+			return false;
+		}
+		
+		return true;
+	}
 
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "INSERT INTO genre(NAME, DESCRIPTION) VALUES(?,?)";
@@ -91,6 +110,10 @@ public class GenresTab extends BaseTab {
 	class EditAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "UPDATE genre SET NAME = ?, DESCRIPTION = ? WHERE id = ?";
@@ -123,6 +146,7 @@ public class GenresTab extends BaseTab {
 
 				statement.execute();
 			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "There is a game using this genre! Delete all games using this genre first!");
 				System.out.println("Error while trying to delete genre in DB:");
 				System.out.println(ex.getMessage());
 			}

@@ -104,7 +104,7 @@ public abstract class BaseTab {
 		}
 	}
 
-	protected ComboBoxItem[] getComboBox(String tableName) {
+	protected ComboBoxItem[] getComboBox(String tableName, boolean showAllOption) {
 		List<ComboBoxItem> genres = new ArrayList<ComboBoxItem>();
 
 		try {
@@ -112,7 +112,10 @@ public abstract class BaseTab {
 			PreparedStatement statement = connection.prepareStatement("SELECT id, name FROM " + tableName);
 			ResultSet resultSet = statement.executeQuery();
 
-			genres.add(new ComboBoxItem(0, "All"));
+			if (showAllOption) {
+				genres.add(new ComboBoxItem(0, "All"));
+			}
+			
 			while (resultSet.next()) {
 				genres.add(new ComboBoxItem(resultSet.getInt("id"), resultSet.getString("name")));
 			}

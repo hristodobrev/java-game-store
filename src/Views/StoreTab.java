@@ -54,7 +54,7 @@ public class StoreTab extends BaseTab {
 
 		// Genres
 		addLabelToPanel("Genres", formPanel, 0, 3);
-		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre"));
+		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre", true));
 
 		JPanel genrePanel = new JPanel(new GridLayout());
 		((GridLayout)genrePanel.getLayout()).setHgap(5);
@@ -64,7 +64,7 @@ public class StoreTab extends BaseTab {
 
 		// Publishers
 		addLabelToPanel("Publishers", formPanel, 0, 4);
-		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher"));
+		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher", true));
 
 		JPanel publisherPanel = new JPanel(new GridLayout());
 		((GridLayout)publisherPanel.getLayout()).setHgap(5);

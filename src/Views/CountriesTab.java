@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -59,10 +60,23 @@ public class CountriesTab extends BaseTab {
 
 		table.removeColumn(table.getColumnModel().getColumn(0));
 	}
+	
+	private boolean validateFields() {
+		if(nameField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Name is required!");
+			return false;
+		}
+		
+		return true;
+	}
 
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if(!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "INSERT INTO country(NAME) VALUES(?)";
@@ -84,6 +98,10 @@ public class CountriesTab extends BaseTab {
 	class EditAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if(!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "UPDATE country SET NAME = ? WHERE id = ?";
@@ -115,6 +133,7 @@ public class CountriesTab extends BaseTab {
 
 				statement.execute();
 			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "There is a publisher from this country! Delete all publisher from this country first!");
 				System.out.println("Error while trying to delete country in DB:");
 				System.out.println(ex.getMessage());
 			}

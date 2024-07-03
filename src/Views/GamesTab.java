@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -51,12 +52,12 @@ public class GamesTab extends BaseTab {
 		
 		// Genres
 		addLabelToPanel("Genres", formPanel, 0, 3);
-		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre"));
+		genresComboBox = new JComboBox<ComboBoxItem>(getComboBox("genre", false));
 		formPanel.add(genresComboBox, getRightGBC(1, 3));
 
 		// Publishers
 		addLabelToPanel("Publishers", formPanel, 0, 4);
-		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher"));
+		publishersComboBox = new JComboBox<ComboBoxItem>(getComboBox("publisher", false));
 		formPanel.add(publishersComboBox, getRightGBC(1, 4));
 
 		// Buttons
@@ -80,6 +81,7 @@ public class GamesTab extends BaseTab {
 	private void clearForm() {
 		titleField.setText("");
 		descriptionField.setText("");
+		releaseDateChooser.setDate(null);
 	}
 
 	@Override
@@ -89,13 +91,36 @@ public class GamesTab extends BaseTab {
 		table.removeColumn(table.getColumnModel().getColumn(0));
 		table.removeColumn(table.getColumnModel().getColumn(3));
 		table.removeColumn(table.getColumnModel().getColumn(4));
-		genresComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getComboBox("genre")));
-		publishersComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getComboBox("publisher")));
+		genresComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getComboBox("genre", false)));
+		publishersComboBox.setModel(new DefaultComboBoxModel<ComboBoxItem>(getComboBox("publisher", false)));
+	}
+
+	private boolean validateFields() {
+		if(titleField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Title is required!");
+			return false;
+		}
+
+		if(descriptionField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Description is required!");
+			return false;
+		}
+
+		if(releaseDateChooser.getDate() == null) {
+			JOptionPane.showMessageDialog(null, "Release date is required!");
+			return false;
+		}
+		
+		return true;
 	}
 
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "INSERT INTO game(TITLE, DESCRIPTION, RELEASE_DATE, PUBLISHER_ID, GENRE_ID) VALUES(?,?,?,?,?)";
@@ -121,6 +146,10 @@ public class GamesTab extends BaseTab {
 	class EditAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "UPDATE game SET TITLE = ?, DESCRIPTION = ?, RELEASE_DATE = ?, PUBLISHER_ID = ?, GENRE_ID = ? WHERE id = ?";

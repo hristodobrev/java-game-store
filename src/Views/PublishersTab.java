@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -41,7 +42,7 @@ public class PublishersTab extends BaseTab {
 
 		// Countries
 		addLabelToPanel("Countries", formPanel, 0, 2);
-		countriesComboBox = new JComboBox<ComboBoxItem>(getComboBox("country"));
+		countriesComboBox = new JComboBox<ComboBoxItem>(getComboBox("country", false));
 		formPanel.add(countriesComboBox, getRightGBC(1, 2));
 
 		// Buttons
@@ -73,13 +74,31 @@ public class PublishersTab extends BaseTab {
 
 		table.removeColumn(table.getColumnModel().getColumn(0));
 		table.removeColumn(table.getColumnModel().getColumn(2));
-		DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<ComboBoxItem>(getComboBox("country"));
+		DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<ComboBoxItem>(getComboBox("country", false));
 		countriesComboBox.setModel(model);
+	}
+	
+	private boolean validateFields() {
+		if(nameField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Name is required!");
+			return false;
+		}
+
+		if(descriptionField.getText().isBlank()) {
+			JOptionPane.showMessageDialog(null, "Description is required!");
+			return false;
+		}
+		
+		return true;
 	}
 	
 	class AddAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "INSERT INTO publisher(NAME, DESCRIPTION, COUNTRY_ID) VALUES(?,?,?)";
@@ -103,6 +122,10 @@ public class PublishersTab extends BaseTab {
 	class EditAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!validateFields()) {
+				return;
+			}
+			
 			try {
 				Connection connection = DbConnection.getConnection();
 				String query = "UPDATE publisher SET NAME = ?, DESCRIPTION = ?, COUNTRY_ID = ? WHERE id = ?";
@@ -136,6 +159,7 @@ public class PublishersTab extends BaseTab {
 
 				statement.execute();
 			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null, "There is a game using this publisher! Delete all games using this publisher first!");
 				System.out.println("Error while trying to delete publisher in DB:");
 				System.out.println(ex.getMessage());
 			}
